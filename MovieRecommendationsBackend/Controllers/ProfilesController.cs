@@ -12,18 +12,18 @@ namespace MovieRecommendationsBackend.Controllers
     public class ProfilesController : ApiController
     {
 
-        public ProfilesController(UserProfileRepository pathToRepository, RegistrationService repository)
+        public ProfilesController(UserProfileRepository pathToRepository, IRegistrationService repository)
         {
             _pathToRepository = pathToRepository;
             _repository = repository;
         }
 
         UserProfileRepository _pathToRepository;
-        RegistrationService _repository;
+        IRegistrationService _repository;
         
 
         [ArgumentFilter]
-        [ModelValidationFilter]
+
         public HttpResponseMessage PostUser([FromBody]Models.Registration user)
         {           
             _repository.AddUser(user.Email, user.Name, user.Surname);
