@@ -15,14 +15,14 @@ namespace MovieRecommendationsBackend.Controllers
     public class MovieController : ApiController
     {
 
-        public MovieController(UserProfileRepository pathToRepository, RegistrationService repository)
+        public MovieController(UserProfileRepository pathToRepository, IRegistrationService repository)
         {
             _pathToRepository = pathToRepository;
             _repository = repository;
         }
 
         UserProfileRepository _pathToRepository;
-        RegistrationService _repository;
+        IRegistrationService _repository;
 
         [ModelValidationFilter]
         [ArgumentFilter]
