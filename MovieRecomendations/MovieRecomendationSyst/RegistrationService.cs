@@ -9,7 +9,7 @@ namespace MovieRecomendationSyst
 {
     public class RegistrationService : IRegistrationService
     {
-        public RegistrationService(IRepository<UserProfile> userProfileRepository)
+        public RegistrationService(UserProfileRepository userProfileRepository)
         {
             _userProfileRepository = userProfileRepository;
         }
@@ -36,6 +36,6 @@ namespace MovieRecomendationSyst
             var newUser = new UserProfile(id, email, name, surname, new WatchedMovie[0]);
             _userProfileRepository.SaveEntity(newUser);
         }
-        private readonly IRepository<UserProfile> _userProfileRepository;
+        private readonly UserProfileRepository _userProfileRepository;
     }
 }

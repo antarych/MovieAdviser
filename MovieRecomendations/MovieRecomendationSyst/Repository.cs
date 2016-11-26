@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace MovieRecomendationSyst
 {
-    public class UserProfileRepository:IRepository<UserProfile>
+    public class UserProfileRepository
     {
         public UserProfileRepository(string userProfileFile)
         {

@@ -8,7 +8,7 @@ namespace MovieRecomendationSyst
 {
     public class MovieInfService : IMovieInfService
     {
-        public MovieInfService(IRepository<UserProfile> profileRepository)
+        public MovieInfService(UserProfileRepository profileRepository)
         {
             _profileRepository = profileRepository;
         }
@@ -27,6 +27,6 @@ namespace MovieRecomendationSyst
         {
             return _profileRepository.GetEntity(id).GetWatchedMoviesForPeriod(dateFrom, dateTo);
         }
-        private readonly IRepository<UserProfile> _profileRepository;
+        private readonly UserProfileRepository _profileRepository;
     }
 }

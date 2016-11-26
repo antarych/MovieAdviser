@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MovieRecomendationSyst
 {
-    public class UserProfile:IUserProfile
+    public class UserProfile
     {
         public UserProfile(int id, string email, string name, string surname, WatchedMovie[] watchedMovies)
         {

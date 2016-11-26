@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Http;
 using System.Web.Routing;
+using MovieRecommendationsBackend.App_Start;
 
 namespace MovieRecommendationsBackend
 {
@@ -11,6 +12,7 @@ namespace MovieRecommendationsBackend
     {
         protected void Application_Start()
         {
+            new Bootstrapper().Setup();
             GlobalConfiguration.Configure(WebApiConfig.Register);
         }
     }

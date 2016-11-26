@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MovieRecomendationSyst
 {
-    interface IMovieInfService
+    public interface IMovieInfService
     {
         double GetAverageRating(int id);
 

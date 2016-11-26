@@ -8,7 +8,7 @@ namespace MovieRecomendationSyst
 {
     public class SocialisationService:ISociatisationService
     {
-        public SocialisationService(IRepository<UserProfile> profileRepository)
+        public SocialisationService(UserProfileRepository profileRepository)
         {
             _profileRepository = profileRepository;
         }
@@ -31,7 +31,7 @@ namespace MovieRecomendationSyst
             }
             return profilesWithSameFilms.ToArray();
         }
-        private WatchedMovie[] GetUserWatchedMovies(IUserProfile[] allProfiles, int id)
+        private WatchedMovie[] GetUserWatchedMovies(UserProfile[] allProfiles, int id)
         {
             foreach (var profile in allProfiles)
             {
@@ -54,6 +54,6 @@ namespace MovieRecomendationSyst
             return watchedMoviesTitles;
         }
 
-        private readonly IRepository<UserProfile> _profileRepository;
+        private readonly UserProfileRepository _profileRepository;
     }
 }

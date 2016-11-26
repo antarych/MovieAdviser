@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MovieRecomendationSyst
 {
-    interface IRegistrationService
+    public interface IRegistrationService
     {
         void AddUser(string email, string name, string surname);
     }

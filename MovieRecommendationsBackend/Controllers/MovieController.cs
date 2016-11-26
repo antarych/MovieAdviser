@@ -7,20 +7,29 @@ using Newtonsoft.Json;
 using System.Linq;
 using System;
 using System.Configuration;
+using SimpleInjector;
+using MovieRecommendationsBackend.Filters;
 
 namespace MovieRecommendationsBackend.Controllers
 {
     public class MovieController : ApiController
     {
-        static string path = ConfigurationManager.AppSettings["PathToRepository"].ToString();
-        public static IRepository<UserProfile> pathToRepository = new UserProfileRepository(path);
-        public RegistrationService repository = new RegistrationService(pathToRepository);
+
+        public MovieController(UserProfileRepository pathToRepository, RegistrationService repository)
+        {
+            _pathToRepository = pathToRepository;
+            _repository = repository;
+        }
+
+        UserProfileRepository _pathToRepository;
+        RegistrationService _repository;
+
+        [ModelValidationFilter]
+        [ArgumentFilter]
         [Route("addmovie/{id}")]
         public HttpResponseMessage PostFilm([FromUri]int id, [FromBody]WatchedMovieModel movie)
         {
-            var allProfiles = pathToRepository.GetAllEntities();
-            if (movie != null)
-            {
+            var allProfiles = _pathToRepository.GetAllEntities();
                 var movieToAdd = new WatchedMovie(new Movie(movie.Movie.Title, movie.Movie.Director, movie.Movie.Genre), movie.Date, movie.Rating);
                 for (int i = 0; i < allProfiles.Length; i++)
                 {
@@ -30,22 +39,15 @@ namespace MovieRecommendationsBackend.Controllers
                         break;
                     }
                 }
-                File.WriteAllText(path, JsonConvert.SerializeObject(allProfiles.ToArray()));
+                File.WriteAllText(ConfigurationManager.AppSettings["PathToRepository"], JsonConvert.SerializeObject(allProfiles.ToArray()));
                 return Request.CreateResponse
                     (System.Net.HttpStatusCode.Created,
                     string.Format("Film {0} was sucessfully added to collection of user with id {1}", movie.Movie.Title, id));
-            }
-            else
-            {
-                return Request.CreateResponse
-                    (System.Net.HttpStatusCode.BadRequest,
-                    string.Format("Bad Request", id));
-            }
         }
         [Route("getrating/{id}")]
         public HttpResponseMessage GetRating(int id)
         {
-            var user = pathToRepository.GetEntity(id);
+            var user = _pathToRepository.GetEntity(id);
             if (user != null)
             {
                 var rating = user.GetAverageRatingForWatchedFilms();
@@ -61,7 +63,7 @@ namespace MovieRecommendationsBackend.Controllers
         [Route("getrating/{genre}/{id}")]
         public HttpResponseMessage GetRating(Genres genre, int id)
         {
-            var user = pathToRepository.GetEntity(id);
+            var user = _pathToRepository.GetEntity(id);
             if (user != null)
             {
                 var rating = user.GetAverageRatingForWatchedFilms(genre);
@@ -76,7 +78,7 @@ namespace MovieRecommendationsBackend.Controllers
         [Route("period/from{date1}/to{date2}/{id}")]
         public HttpResponseMessage GetMoviesForPeriod([FromUri]int id, DateTime date1, DateTime date2)
         {
-            var user = pathToRepository.GetEntity(id);
+            var user = _pathToRepository.GetEntity(id);
             if (user != null)
             {
                 var movies = user.GetWatchedMoviesForPeriod(date1, date2);

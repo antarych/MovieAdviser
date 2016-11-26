@@ -3,17 +3,30 @@ using System.Net.Http;
 using System.Web.Http;
 using MovieRecomendationSyst;
 using System.Configuration;
+using MovieRecommendationsBackend.App_Start;
+using SimpleInjector;
+using MovieRecommendationsBackend.Filters;
 
 namespace MovieRecommendationsBackend.Controllers
 {
     public class ProfilesController : ApiController
     {
-        static string path = ConfigurationManager.AppSettings["PathToRepository"].ToString();
-        public static IRepository<UserProfile> pathToRepository = new UserProfileRepository(path);
-        public RegistrationService repository = new RegistrationService(pathToRepository);
-        public HttpResponseMessage PostUser([FromBody]Registration user)
+
+        public ProfilesController(UserProfileRepository pathToRepository, RegistrationService repository)
+        {
+            _pathToRepository = pathToRepository;
+            _repository = repository;
+        }
+
+        UserProfileRepository _pathToRepository;
+        RegistrationService _repository;
+        
+
+        [ArgumentFilter]
+        [ModelValidationFilter]
+        public HttpResponseMessage PostUser([FromBody]Models.Registration user)
         {           
-            repository.AddUser(user.Email, user.Name, user.Surname);
+            _repository.AddUser(user.Email, user.Name, user.Surname);
             return Request.CreateResponse
                 (System.Net.HttpStatusCode.Created,
                 string.Format("User {0} was sucessfully added", user.Name));
@@ -21,7 +34,7 @@ namespace MovieRecommendationsBackend.Controllers
 
         public HttpResponseMessage GetUserProfile(int id)
         {
-            var user = pathToRepository.GetEntity(id);
+            var user = _pathToRepository.GetEntity(id);
             if (user != null) { return Request.CreateResponse(user); }
             else
                 return Request.CreateResponse(System.Net.HttpStatusCode.NotFound, string.Format("User with {0} id not found", id));
@@ -29,7 +42,7 @@ namespace MovieRecommendationsBackend.Controllers
 
         public HttpResponseMessage GetAllProfiles()
         {
-            var allProfiles = pathToRepository.GetAllEntities();
+            var allProfiles = _pathToRepository.GetAllEntities();
             if (allProfiles != null)
             {
                 return Request.CreateResponse(allProfiles);
@@ -43,10 +56,10 @@ namespace MovieRecommendationsBackend.Controllers
         [Route("adviser/{id}/matches")]
         public HttpResponseMessage GetMatches(int id)
         {
-            var user = pathToRepository.GetEntity(id);
+            var user = _pathToRepository.GetEntity(id);
             if (user != null)
             {
-                SocialisationService profileRepository = new SocialisationService(pathToRepository);
+                SocialisationService profileRepository = new SocialisationService(_pathToRepository);
                 var matches = profileRepository.GetProfilesWithSameMovies(id);
                 
                 return Request.CreateResponse(System.Net.HttpStatusCode.Created, matches);        
